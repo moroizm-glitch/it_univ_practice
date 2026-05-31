@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ファブレス半導体 総合ダッシュボード 2025</title>
+<title>SOX指数 構成銘柄 総合ダッシュボード 2025</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -15,537 +15,360 @@
   --text: #d4e0ec;
   --muted: #4a6070;
   --muted2: #8b949e;
-  --accent: #00d4ff;
-
-  --c-ai:     #00d4ff;
-  --c-asic:   #0ea5e9;
-  --c-net:    #f97316;
-  --c-cpu:    #6366f1;
-  --c-gaming: #3b82f6;
-  --c-mobile: #f59e0b;
-  --c-patent: #d2a8ff;
-  --c-sw:     #10b981;
-  --c-auto:   #ec4899;
-  --c-iot:    #84cc16;
-  --c-embed:  #94a3b8;
-  --c-other:  #475569;
+  --accent: #f59e0b;
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Noto Sans JP', sans-serif; min-height: 100vh; }
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Noto Sans JP', sans-serif;
-  min-height: 100vh;
-}
+/* HEADER */
+.site-header { background: linear-gradient(180deg,#0c1a10 0%,var(--bg) 100%); border-bottom:1px solid var(--border); padding:36px 24px 28px; text-align:center; }
+.eyebrow { font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:4px; color:var(--accent); text-transform:uppercase; margin-bottom:10px; }
+.site-header h1 { font-size:clamp(20px,4vw,30px); font-weight:900; color:#fff; letter-spacing:-0.5px; margin-bottom:8px; }
+.site-header .desc { font-size:12px; color:var(--muted); font-family:'IBM Plex Mono',monospace; }
+.sox-badge { display:inline-block; margin-top:10px; padding:4px 14px; background:#1a2e10; border:1px solid #3fb950; border-radius:20px; font-size:11px; color:#3fb950; font-family:'IBM Plex Mono',monospace; }
 
-/* ========== TOP HEADER ========== */
-.site-header {
-  background: linear-gradient(180deg, #0a1520 0%, var(--bg) 100%);
-  border-bottom: 1px solid var(--border);
-  padding: 36px 24px 32px;
-  text-align: center;
-}
-.eyebrow {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 4px;
-  color: var(--accent);
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
-.site-header h1 {
-  font-size: clamp(20px, 4vw, 32px);
-  font-weight: 900;
-  color: #fff;
-  letter-spacing: -0.5px;
-  margin-bottom: 8px;
-}
-.site-header .desc {
-  font-size: 12px;
-  color: var(--muted);
-  font-family: 'IBM Plex Mono', monospace;
-}
+/* NAV */
+.nav-tabs { display:flex; justify-content:center; gap:4px; padding:14px 20px; background:var(--panel); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100; flex-wrap:wrap; }
+.nav-tab { padding:7px 20px; border-radius:24px; font-size:13px; font-weight:700; cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--muted2); transition:all 0.2s; white-space:nowrap; }
+.nav-tab:hover { color:var(--text); border-color:#2a3d50; }
+.nav-tab.active { background:var(--accent); border-color:var(--accent); color:#000; }
 
-/* ========== NAV TABS ========== */
-.nav-tabs {
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-  padding: 16px 20px;
-  background: var(--panel);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  flex-wrap: wrap;
-}
-.nav-tab {
-  padding: 8px 20px;
-  border-radius: 24px;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--muted2);
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-.nav-tab:hover { color: var(--text); border-color: #2a3d50; }
-.nav-tab.active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #000;
-}
+/* SECTIONS */
+.section { display:none; padding:24px 16px 56px; max-width:1140px; margin:0 auto; }
+.section.active { display:block; }
+.section-title { font-size:15px; font-weight:900; color:#fff; margin-bottom:3px; }
+.section-sub { font-size:11px; color:var(--muted); font-family:'IBM Plex Mono',monospace; margin-bottom:18px; }
 
-/* ========== SECTIONS ========== */
-.section { display: none; padding: 28px 20px 48px; max-width: 1100px; margin: 0 auto; }
-.section.active { display: block; }
+/* SORT TABS */
+.sort-tabs { display:flex; gap:5px; margin-bottom:12px; flex-wrap:wrap; }
+.sort-tab { padding:5px 14px; border-radius:20px; font-size:11px; cursor:pointer; border:1px solid var(--border2); background:var(--panel2); color:var(--muted2); transition:all 0.15s; }
+.sort-tab.active,.sort-tab:hover { background:#1f6feb; border-color:#1f6feb; color:#fff; }
 
-.section-title {
-  font-size: 16px;
-  font-weight: 900;
-  color: #fff;
-  margin-bottom: 4px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.section-sub {
-  font-size: 11px;
-  color: var(--muted);
-  font-family: 'IBM Plex Mono', monospace;
-  margin-bottom: 20px;
-}
+/* TABLE */
+.tbl-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:11px; min-width:600px; }
+th { background:var(--panel2); color:var(--muted2); padding:8px 8px; text-align:left; border-bottom:1px solid var(--border); white-space:nowrap; font-size:10px; }
+th.right { text-align:right; }
+td { padding:7px 8px; border-bottom:1px solid var(--border2); vertical-align:middle; }
+td.right { text-align:right; font-family:'IBM Plex Mono',monospace; font-size:11px; }
+tr:hover td { background:#0f1923; }
+.note-row td { font-size:9px; color:var(--muted); font-style:italic; padding:1px 8px 6px; border-bottom:1px solid var(--border2); line-height:1.5; }
 
-/* ========== SORT TABS ========== */
-.sort-tabs {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 14px;
-  flex-wrap: wrap;
-}
-.sort-tab {
-  padding: 5px 16px;
-  border-radius: 20px;
-  font-size: 12px;
-  cursor: pointer;
-  border: 1px solid var(--border2);
-  background: var(--panel2);
-  color: var(--muted2);
-  transition: all 0.15s;
-}
-.sort-tab.active, .sort-tab:hover {
-  background: #1f6feb;
-  border-color: #1f6feb;
-  color: #fff;
-}
+/* BADGES */
+.rank { display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:50%; font-size:9px; font-weight:bold; flex-shrink:0; }
+.r1{background:#d2a8ff;color:#0d1117;} .r2{background:#79c0ff;color:#0d1117;} .r3{background:#3fb950;color:#0d1117;}
+.rg1{background:#e3b341;color:#0d1117;} .rg2{background:#8b949e;color:#0d1117;} .rg3{background:#79c0ff;color:#0d1117;}
+.rn{background:#30363d;color:var(--muted2);}
+.ticker-cell { font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; }
+.co-name-sm { font-size:10px; color:var(--muted2); }
 
-/* ========== TABLE ========== */
-.tbl-wrap { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 520px; }
-th {
-  background: var(--panel2);
-  color: var(--muted2);
-  padding: 9px 10px;
-  text-align: left;
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-  font-size: 11px;
-}
-th.right { text-align: right; }
-td { padding: 9px 10px; border-bottom: 1px solid var(--border2); vertical-align: middle; }
-td.right { text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
-tr:hover td { background: #0f1923; }
-.note-row td {
-  font-size: 10px;
-  color: var(--muted);
-  font-style: italic;
-  padding: 2px 10px 8px;
-  border-bottom: 1px solid var(--border2);
-}
+.cat { font-size:9px; padding:2px 6px; border-radius:8px; white-space:nowrap; }
+.c-design  { background:#1a4721; color:#3fb950; }
+.c-idm     { background:#1c2d47; color:#79c0ff; }
+.c-foundry { background:#2d1b69; color:#d2a8ff; }
+.c-equip   { background:#3d2208; color:#e3b341; }
+.c-analog  { background:#3d1c1c; color:#ffa198; }
+.c-memory  { background:#1a2e10; color:#84cc16; }
+.c-pkg     { background:#21262d; color:#8b949e; }
 
-/* ========== SHARED COMPONENTS ========== */
-.rank {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px; height: 22px;
-  border-radius: 50%;
-  font-size: 10px;
-  font-weight: bold;
-}
-.r1 { background: #d2a8ff; color: #0d1117; }
-.r2 { background: #79c0ff; color: #0d1117; }
-.r3 { background: #3fb950; color: #0d1117; }
-.rg1 { background: #e3b341; color: #0d1117; }
-.rg2 { background: #8b949e; color: #0d1117; }
-.rg3 { background: #79c0ff; color: #0d1117; }
-.rn  { background: #30363d; color: var(--muted2); }
+.bar-wrap { display:flex; align-items:center; gap:5px; }
+.bar-bg { flex:1; background:var(--border2); border-radius:2px; height:7px; max-width:120px; }
+.bar-fill { height:7px; border-radius:2px; }
+.bar-pct { font-size:11px; font-family:'IBM Plex Mono',monospace; min-width:40px; text-align:right; font-weight:bold; }
 
-.tag { font-size: 9px; padding: 2px 7px; border-radius: 10px; white-space: nowrap; }
-.t-ip     { background: #2d1b69; color: #d2a8ff; }
-.t-ai     { background: #1a4721; color: #3fb950; }
-.t-cpu    { background: #1c2d47; color: #79c0ff; }
-.t-mobile { background: #3d2208; color: #e3b341; }
-.t-infra  { background: #3d1c1c; color: #ffa198; }
+.verdict { font-size:9px; padding:2px 6px; border-radius:8px; white-space:nowrap; }
+.v-cheap   { background:#1a4721; color:#3fb950; }
+.v-fair    { background:#1c2d47; color:#79c0ff; }
+.v-high    { background:#3d2208; color:#e3b341; }
+.v-very    { background:#3d1c1c; color:#ffa198; }
+.v-extreme { background:#2d1b69; color:#d2a8ff; }
+.v-neg     { background:#21262d; color:var(--muted2); }
+.v-none    { background:#21262d; color:var(--muted); }
 
-.ticker { font-size: 10px; color: var(--muted2); }
+.info-box { margin-top:14px; font-size:10px; color:var(--muted); line-height:1.9; padding:10px 14px; background:var(--panel2); border-radius:6px; border:1px solid var(--border); }
+.info-box b { color:var(--muted2); }
 
-.bar-wrap { display: flex; align-items: center; gap: 6px; }
-.bar-bg { flex: 1; background: var(--border2); border-radius: 3px; height: 9px; max-width: 150px; }
-.bar-fill { height: 9px; border-radius: 3px; }
-.bar-pct { font-size: 12px; font-family: 'IBM Plex Mono', monospace; min-width: 44px; text-align: right; font-weight: bold; }
+/* LEGEND */
+.legend-row { display:flex; flex-wrap:wrap; gap:8px 14px; padding:10px 14px; background:var(--panel2); border:1px solid var(--border); border-radius:7px; margin-bottom:16px; }
+.leg { display:flex; align-items:center; gap:5px; font-size:10px; color:var(--muted); }
+.leg-dot { width:9px; height:9px; border-radius:2px; flex-shrink:0; }
 
-.verdict { font-size: 10px; padding: 2px 7px; border-radius: 10px; white-space: nowrap; }
-.v-cheap   { background: #1a4721; color: #3fb950; }
-.v-fair    { background: #1c2d47; color: #79c0ff; }
-.v-high    { background: #3d2208; color: #e3b341; }
-.v-extreme { background: #2d1b69; color: #d2a8ff; }
-.v-none    { background: #21262d; color: var(--muted); }
-
-.info-box {
-  margin-top: 16px;
-  font-size: 10px;
-  color: var(--muted);
-  line-height: 1.9;
-  padding: 12px 14px;
-  background: var(--panel2);
-  border-radius: 6px;
-  border: 1px solid var(--border);
-}
-.info-box b { color: var(--muted2); }
-
-/* ========== REVENUE BREAKDOWN (カード) ========== */
-.legend-box {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 16px;
-  padding: 14px 16px;
-  background: var(--panel2);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  margin-bottom: 24px;
-}
-.leg-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
-.leg-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
-
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 18px;
-}
-.card {
-  background: var(--panel2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 20px;
-  position: relative;
-  overflow: hidden;
-  transition: border-color 0.2s;
-}
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: var(--card-accent, var(--accent));
-  opacity: 0.7;
-}
-.card:hover { border-color: #2a3d50; }
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 16px;
-}
-.co-name { font-size: 17px; font-weight: 900; color: #fff; }
-.co-ticker { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); margin-top: 1px; }
-.rev-badge { text-align: right; }
-.rev-num { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 600; color: var(--card-accent, var(--accent)); }
-.rev-label { font-size: 9px; color: var(--muted); }
-
-.stacked-bar {
-  display: flex;
-  height: 12px;
-  border-radius: 4px;
-  overflow: hidden;
-  gap: 1px;
-  margin-bottom: 14px;
-}
-.sbar-seg { transition: opacity 0.15s; cursor: default; }
-.sbar-seg:hover { opacity: 0.8; }
-
-.seg-list { display: flex; flex-direction: column; gap: 7px; }
-.seg-row { display: flex; align-items: center; gap: 7px; }
-.seg-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
-.seg-name { font-size: 11px; color: var(--text); flex: 1; }
-.seg-mini-bg { width: 70px; height: 4px; background: var(--border2); border-radius: 2px; overflow: hidden; }
-.seg-mini-fill { height: 4px; border-radius: 2px; }
-.seg-pct { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; min-width: 34px; text-align: right; }
-.card-note { font-size: 10px; color: var(--muted); margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); line-height: 1.6; }
-
-.footer-note {
-  text-align: center;
-  margin-top: 36px;
-  font-size: 10px;
-  color: var(--muted);
-  font-family: 'IBM Plex Mono', monospace;
-  line-height: 1.9;
-}
+/* SOX OVERVIEW */
+.overview-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px; margin-bottom:20px; }
+.kpi-card { background:var(--panel2); border:1px solid var(--border); border-radius:8px; padding:14px; }
+.kpi-label { font-size:9px; color:var(--muted); font-family:'IBM Plex Mono',monospace; margin-bottom:4px; letter-spacing:1px; }
+.kpi-val { font-size:18px; font-weight:900; color:var(--accent); font-family:'IBM Plex Mono',monospace; }
+.kpi-sub { font-size:9px; color:var(--muted); margin-top:2px; }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="site-header">
-  <div class="eyebrow">Fabless Semiconductor · Comprehensive Dashboard · FY2025</div>
-  <h1>主要ファブレス半導体企業<br>総合ダッシュボード</h1>
-  <p class="desc">売上構成 ／ 粗利益・粗利率 ／ PER比較　　2025年度実績 · 2026年5月末時点</p>
+  <div class="eyebrow">PHLX Semiconductor Sector Index · SOX · Comprehensive Dashboard</div>
+  <h1>SOX指数 構成銘柄<br>総合ダッシュボード</h1>
+  <p class="desc">全30銘柄　売上・粗利率・PER 完全比較　2025年度実績 · 2026年5月末時点</p>
+  <div class="sox-badge">SOX 13,087 pts　｜　構成30銘柄　｜　時価総額加重平均</div>
 </div>
 
-<!-- NAV -->
 <div class="nav-tabs">
-  <div class="nav-tab active" onclick="showTab('revenue')">📦 売上構成</div>
-  <div class="nav-tab" onclick="showTab('margin')">💰 粗利益・粗利率</div>
-  <div class="nav-tab" onclick="showTab('per')">📈 PER比較</div>
+  <div class="nav-tab active" onclick="showTab('overview')">📊 概要</div>
+  <div class="nav-tab" onclick="showTab('margin')">💰 粗利率</div>
+  <div class="nav-tab" onclick="showTab('per')">📈 PER</div>
 </div>
 
-<!-- ===== TAB 1: 売上構成 ===== -->
-<div class="section active" id="tab-revenue">
-  <div class="section-title">📦 売上構成比較</div>
-  <div class="section-sub">各企業の事業セグメント別売上割合（2025年度）</div>
-  <div class="legend-box" id="rev-legend"></div>
-  <div class="cards-grid" id="rev-cards"></div>
-  <div class="footer-note">
-    ※ 売上高は概算（単位：億ドル）　※ 各社2025年度決算資料より集計<br>
-    ※ MediaTekはTWD→USD換算（概算）　※ Broadcomは半導体＋VMwareソフトウェア含む
-  </div>
-</div>
+<!-- ===== TAB: OVERVIEW ===== -->
+<div class="section active" id="tab-overview">
+  <div class="section-title">📊 SOX指数 構成銘柄 一覧</div>
+  <div class="section-sub">30銘柄の売上・粗利益・PER を一覧表示 ／ ボタンで並び替え可能</div>
 
-<!-- ===== TAB 2: 粗利益 ===== -->
-<div class="section" id="tab-margin">
-  <div class="section-title">💰 粗利益・粗利率 比較</div>
-  <div class="section-sub">最新決算（2025年度）基準 ／ ボタンで並び替え可能　　行にマウスを乗せると補足説明が表示されます</div>
-  <div class="sort-tabs" id="margin-sort-tabs">
-    <div class="sort-tab active" onclick="setMarginSort('margin')">粗利率順</div>
-    <div class="sort-tab" onclick="setMarginSort('profit')">粗利益額順</div>
-    <div class="sort-tab" onclick="setMarginSort('revenue')">売上順</div>
-    <div class="sort-tab" onclick="setMarginSort('name')">名前順</div>
+  <div class="overview-grid">
+    <div class="kpi-card"><div class="kpi-label">SOX INDEX</div><div class="kpi-val">13,087</div><div class="kpi-sub">2026年5月末時点</div></div>
+    <div class="kpi-card"><div class="kpi-label">構成銘柄数</div><div class="kpi-val">30</div><div class="kpi-sub">設計・製造・装置・材料</div></div>
+    <div class="kpi-card"><div class="kpi-label">最大銘柄</div><div class="kpi-val">NVDA</div><div class="kpi-sub">上位3銘柄キャップ制</div></div>
+    <div class="kpi-card"><div class="kpi-label">指数開始</div><div class="kpi-val">1993</div><div class="kpi-sub">初期値200から約65倍に</div></div>
+    <div class="kpi-card"><div class="kpi-label">設計（ファブレス）</div><div class="kpi-val">14社</div><div class="kpi-sub">自分で製造しない企業</div></div>
+    <div class="kpi-card"><div class="kpi-label">製造装置</div><div class="kpi-val">7社</div><div class="kpi-sub">AMAT・LRCX・KLAC等</div></div>
   </div>
+
+  <div class="sort-tabs" id="ov-sort-tabs">
+    <div class="sort-tab active" onclick="setOvSort('revenue')">売上順</div>
+    <div class="sort-tab" onclick="setOvSort('margin')">粗利率順</div>
+    <div class="sort-tab" onclick="setOvSort('fper')">予想PER順</div>
+    <div class="sort-tab" onclick="setOvSort('name')">名前順</div>
+  </div>
+
+  <div class="legend-row">
+    <div class="leg"><div class="leg-dot c-design" style="background:#3fb950"></div>ファブレス設計</div>
+    <div class="leg"><div class="leg-dot" style="background:#79c0ff"></div>IDM（設計+製造）</div>
+    <div class="leg"><div class="leg-dot" style="background:#d2a8ff"></div>ファウンドリ（製造専業）</div>
+    <div class="leg"><div class="leg-dot" style="background:#e3b341"></div>製造装置・材料</div>
+    <div class="leg"><div class="leg-dot" style="background:#ffa198"></div>アナログ・混合信号</div>
+    <div class="leg"><div class="leg-dot" style="background:#84cc16"></div>メモリ</div>
+    <div class="leg"><div class="leg-dot" style="background:#8b949e"></div>パッケージング・その他</div>
+  </div>
+
   <div class="tbl-wrap">
     <table>
-      <thead>
-        <tr>
-          <th style="width:40px">順位</th>
-          <th>企業名</th>
-          <th>主な製品</th>
-          <th class="right">売上高</th>
-          <th class="right">粗利益</th>
-          <th>粗利率（バー）</th>
-        </tr>
-      </thead>
-      <tbody id="margin-tbody"></tbody>
+      <thead><tr>
+        <th style="width:32px">順位</th>
+        <th>Ticker</th>
+        <th>企業名</th>
+        <th>カテゴリ</th>
+        <th class="right">売上高</th>
+        <th class="right">粗利益</th>
+        <th>粗利率</th>
+        <th class="right">実績PER</th>
+        <th class="right">予想PER</th>
+        <th>割安感</th>
+      </tr></thead>
+      <tbody id="ov-tbody"></tbody>
     </table>
   </div>
   <div class="info-box">
-    ※ 売上・粗利益の単位は <b>億ドル</b>（例：$40B＝約6兆円）<br>
-    ※ <b>ARM</b> は特許ライセンス収入のみ。製造コストがほぼゼロのため97%という別次元の数字<br>
-    ※ <b>Broadcom</b> はソフトウェア（VMware）込み。半導体部門単体はやや低い<br>
-    ※ <b>Cerebras</b> は2025年実績。粗利率40%台だが研究開発費等で営業赤字継続<br>
-    ※ <b>MediaTek</b> はTWD→USD換算（概算）
+    ※ 売上・粗利益の単位は <b>億ドル（B）</b>　※ 2025年度（各社決算期異なる）実績ベース<br>
+    ※ <b>TSM（TSMC）</b>は台湾上場だが米国ADRとしてSOX構成　※ <b>INTC</b>は赤字のためPER計算不可<br>
+    ※ 製造装置（AMAT・LRCX・KLAC・ASML等）は半導体を「作る機械」を売る企業　※ 行にマウスを乗せると説明表示
   </div>
 </div>
 
-<!-- ===== TAB 3: PER ===== -->
+<!-- ===== TAB: GROSS MARGIN ===== -->
+<div class="section" id="tab-margin">
+  <div class="section-title">💰 粗利率 ランキング</div>
+  <div class="section-sub">SOX30銘柄の粗利益・粗利率 比較 ／ ボタンで並び替え可能</div>
+  <div class="sort-tabs" id="mg-sort-tabs">
+    <div class="sort-tab active" onclick="setMgSort('margin')">粗利率順</div>
+    <div class="sort-tab" onclick="setMgSort('profit')">粗利益額順</div>
+    <div class="sort-tab" onclick="setMgSort('revenue')">売上順</div>
+    <div class="sort-tab" onclick="setMgSort('name')">名前順</div>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th style="width:32px">順</th>
+        <th>Ticker</th>
+        <th>企業名</th>
+        <th>カテゴリ</th>
+        <th class="right">売上高</th>
+        <th class="right">粗利益</th>
+        <th colspan="2">粗利率（バー）</th>
+      </tr></thead>
+      <tbody id="mg-tbody"></tbody>
+    </table>
+  </div>
+  <div class="info-box">
+    <b>粗利率が高い理由の傾向：</b><br>
+    ・ファブレス設計（NVDA・AVGO・QCOM等）は製造コストがないため高い<br>
+    ・製造装置（ASML・KLAC等）は独占的技術で高マージン維持<br>
+    ・メモリ（MU）やIDM（INTC）は製造設備の減価償却コストが重く低め<br>
+    ・アナログ（TXN・ADI）は製品寿命が長く安定した中程度マージン
+  </div>
+</div>
+
+<!-- ===== TAB: PER ===== -->
 <div class="section" id="tab-per">
-  <div class="section-title">📈 PER（株価収益率）比較</div>
-  <div class="section-sub">「株価 ÷ 1株あたり利益」= 何年分の利益で株を買っているか　　2026年5月末時点</div>
+  <div class="section-title">📈 PER（株価収益率）ランキング</div>
+  <div class="section-sub">SOX30銘柄の実績・予想PER 比較 ／ ボタンで並び替え可能</div>
   <div class="sort-tabs" id="per-sort-tabs">
-    <div class="sort-tab active" onclick="setPerSort('forwardPer')">予想PER（割安度）順</div>
-    <div class="sort-tab" onclick="setPerSort('trailingPer')">実績PER順</div>
+    <div class="sort-tab active" onclick="setPerSort('fper')">予想PER順（割安→割高）</div>
+    <div class="sort-tab" onclick="setPerSort('tper')">実績PER順</div>
     <div class="sort-tab" onclick="setPerSort('name')">名前順</div>
   </div>
   <div class="tbl-wrap">
     <table>
-      <thead>
-        <tr>
-          <th style="width:40px">順位</th>
-          <th>企業名</th>
-          <th>主な製品</th>
-          <th class="right">実績PER<br><span style="font-size:9px;font-weight:normal">（過去12ヶ月）</span></th>
-          <th class="right">予想PER<br><span style="font-size:9px;font-weight:normal">（今後12ヶ月予測）</span></th>
-          <th>割高・割安感</th>
-          <th>予想PERバー</th>
-        </tr>
-      </thead>
+      <thead><tr>
+        <th style="width:32px">順</th>
+        <th>Ticker</th>
+        <th>企業名</th>
+        <th>カテゴリ</th>
+        <th class="right">実績PER<br><span style="font-size:8px;font-weight:normal">過去12ヶ月</span></th>
+        <th class="right">予想PER<br><span style="font-size:8px;font-weight:normal">今後12ヶ月</span></th>
+        <th>割安感</th>
+        <th>予想PERバー</th>
+      </tr></thead>
       <tbody id="per-tbody"></tbody>
     </table>
   </div>
   <div class="info-box">
-    <b>PERとは：</b>「今の株価は、会社が1年で稼ぐ利益の何年分か」を表す数字。PER30＝30年分の利益が必要＝それだけ将来への期待が高い<br><br>
-    <b>実績PER</b> = 過去の実際の利益で計算（確実だが古い）　／　<b>予想PER</b> = アナリストの将来予測で計算（不確かだが参考になる）<br><br>
-    <b>半導体セクターの目安：</b> 予想PER 20〜30倍＝標準、30〜50倍＝やや割高、50倍超＝高成長への強い期待、100倍超＝夢への投資<br>
-    ※ <b>Cerebras</b> は上場直後で赤字のためPER計算不可（N/A）
+    <b>PERの読み方：</b>「今の株価は年間利益の何年分か」。低いほど割安、高いほど将来への期待が高い<br>
+    <b>半導体セクター目安：</b> 予想PER ～20倍＝割安、20〜35倍＝標準、35〜60倍＝やや割高、60倍超＝強い成長期待<br><br>
+    ※ <b>INTC（Intel）</b>は赤字のためPER計算不可　※ <b>AMKR・GFS・ACLS</b>等は低PERだが成熟・景気敏感銘柄
   </div>
 </div>
 
 <script>
-// ========== TAB SWITCH ==========
-function showTab(name) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  const idx = ['revenue','margin','per'].indexOf(name);
-  document.querySelectorAll('.nav-tab')[idx].classList.add('active');
-}
-
-// ========== SHARED DATA ==========
-const COLORS = {
-  ai:     '#00d4ff',
-  asic:   '#0ea5e9',
-  net:    '#f97316',
-  cpu:    '#6366f1',
-  gaming: '#3b82f6',
-  mobile: '#f59e0b',
-  patent: '#d2a8ff',
-  sw:     '#10b981',
-  auto:   '#ec4899',
-  iot:    '#84cc16',
-  embed:  '#94a3b8',
-  other:  '#475569',
-};
-
-const COLOR_LABELS = {
-  ai:     'AIデータセンターGPU',
-  asic:   'AIカスタムASIC',
-  net:    'ネットワーク・通信チップ',
-  cpu:    'PC向けCPU (Ryzen/EPYC)',
-  gaming: 'ゲーミングGPU',
-  mobile: 'スマホ向けSoC',
-  patent: '特許ライセンス・ロイヤリティ',
-  sw:     'ソフトウェア（VMware等）',
-  auto:   '車載・自動運転',
-  iot:    'IoT・スマートTV',
-  embed:  '産業向けEmbedded',
-  other:  'その他',
-};
-
-// ========== TAB1: REVENUE BREAKDOWN ==========
-const revCompanies = [
-  { name:'Nvidia',       ticker:'NVDA',     accent:'#00d4ff', revenue:'2,160',
-    note:'AIデータセンター（H100・Blackwell GPU）が88%を独占。2年で売上4倍。ゲーミングGPUはもはや副業レベル。',
-    segs:[{ key:'ai', name:'AIデータセンター', pct:88},{ key:'gaming', name:'ゲーミングGPU', pct:9},{ key:'other', name:'車載・その他', pct:3}]},
-  { name:'Broadcom',     ticker:'AVGO',     accent:'#f97316', revenue:'683',
-    note:'Google・MetaのAIカスタムチップ（ASIC）設計が急拡大。VMware買収でソフトウェア事業が45%を占め安定収益源を確立。',
-    segs:[{ key:'asic', name:'AIカスタムASIC・ネットワーク', pct:55},{ key:'sw', name:'ソフトウェア（VMware等）', pct:45}]},
-  { name:'Qualcomm',     ticker:'QCOM',     accent:'#f59e0b', revenue:'443',
-    note:'Snapdragonがスマホ市場を席巻。5G特許ライセンスが年間$56億の安定収入。車載・AI PCへ多角化を急ぐ。',
-    segs:[{ key:'mobile', name:'スマホ向けSoC（Snapdragon）', pct:74},{ key:'patent', name:'5G特許ライセンス（QTL）', pct:13},{ key:'auto', name:'車載・IoT', pct:13}]},
-  { name:'AMD',          ticker:'AMD',      accent:'#6366f1', revenue:'258',
-    note:'AIデータセンター（EPYC+Instinct）が急成長し49%に。Meta・OpenAIとの6GW契約が最大材料。',
-    segs:[{ key:'ai', name:'AIデータセンター（EPYC+Instinct）', pct:49},{ key:'cpu', name:'PC向けCPU（Ryzen）', pct:28},{ key:'embed', name:'産業向けEmbedded', pct:13},{ key:'gaming', name:'ゲーミング', pct:10}]},
-  { name:'ARM Holdings', ticker:'ARM',      accent:'#d2a8ff', revenue:'40',
-    note:'製品を一切作らず「設計図のライセンス」だけで$40億。世界中のスマホ・PC・サーバーの95%超がARMベース。粗利率97%。',
-    segs:[{ key:'patent', name:'ライセンス料（設計使用料）', pct:60},{ key:'other', name:'ロイヤリティ（出荷ごと）', pct:40}]},
-  { name:'Marvell',      ticker:'MRVL',     accent:'#0ea5e9', revenue:'78',
-    note:'AWS・MicrosoftのカスタムAIチップ（ASIC）共同設計に特化。BroadcomとMarvellで世界ASIC市場の95%を独占。',
-    segs:[{ key:'asic', name:'AIカスタムASIC（AWS・MS向け）', pct:73},{ key:'net', name:'ネットワーク・通信インフラ', pct:27}]},
-  { name:'MediaTek',     ticker:'2454.TW',  accent:'#84cc16', revenue:'195',
-    note:'Dimensityシリーズが売上59%。新興国スマホ首位。NvidiaとのAI PC共同開発（N1チップ）が2026年後半の注目点。',
-    segs:[{ key:'mobile', name:'スマホ向けSoC（Dimensity）', pct:59},{ key:'iot', name:'スマートTV・IoT', pct:21},{ key:'net', name:'Wi-Fi・通信チップ', pct:12},{ key:'auto', name:'車載・その他', pct:8}]},
+// ========== MASTER DATA: SOX 30 COMPONENTS ==========
+// cat: design=ファブレス設計, idm=IDM, foundry=ファウンドリ, equip=装置, analog=アナログ, memory=メモリ, pkg=パッケージ
+const SOX = [
+  { ticker:'NVDA', name:'Nvidia',               cat:'design',  catLabel:'設計',       revenue:2159, profit:1534, margin:71, tper:33,  fper:22,  verdict:'v-fair',  vLabel:'適正〜割安', note:'AI GPUで世界シェア87%。CUDAモートで競合を圧倒。2025年度売上が前年比114%増。予想PERは成長比で割安水準' },
+  { ticker:'AVGO', name:'Broadcom',             cat:'design',  catLabel:'設計',       revenue:683,  profit:463,  margin:68, tper:62,  fper:37,  verdict:'v-high',  vLabel:'やや割高',  note:'AI ASICとVMwareソフトで二本足。Google・MetaのカスタムAIチップ設計受注が急成長。配当も安定' },
+  { ticker:'TSM',  name:'TSMC',                 cat:'foundry', catLabel:'ファウンドリ',revenue:880,  profit:510,  margin:58, tper:24,  fper:20,  verdict:'v-fair',  vLabel:'適正',      note:'世界最先端の半導体製造専業。2nmプロセス量産中。Nvidia・Apple・AMD全てのハイエンドチップを製造。台湾地政学リスクが割引要因' },
+  { ticker:'AMD',  name:'Advanced Micro Devices',cat:'design', catLabel:'設計',       revenue:258,  profit:142,  margin:55, tper:169, fper:45,  verdict:'v-high',  vLabel:'やや割高',  note:'AIデータセンター（EPYC+Instinct）が急成長。Meta・OpenAIと6GW規模の大型契約。NvidiaのCUDA独占に唯一挑戦できる存在' },
+  { ticker:'QCOM', name:'Qualcomm',             cat:'design',  catLabel:'設計',       revenue:443,  profit:245,  margin:55, tper:19,  fper:18,  verdict:'v-cheap', vLabel:'割安',      note:'Snapdragonがスマホ市場席巻。5G特許収入が安定。スマホ低迷で株価が不当に売られており割安感が強い。車載・AI PCへ多角化中' },
+  { ticker:'ASML', name:'ASML Holding',         cat:'equip',   catLabel:'製造装置',   revenue:352,  profit:162,  margin:46, tper:35,  fper:28,  verdict:'v-fair',  vLabel:'適正',      note:'EUV露光装置の世界唯一のメーカー。この機械なしに最先端チップは作れない。完全独占で強力なモート。米中規制で中国向け輸出制限が影響' },
+  { ticker:'AMAT', name:'Applied Materials',    cat:'equip',   catLabel:'製造装置',   revenue:277,  profit:129,  margin:47, tper:20,  fper:18,  verdict:'v-cheap', vLabel:'割安',      note:'半導体成膜・エッチング装置世界最大手。ロジック・メモリ・ファウンドリ全方位対応。AI投資増でWFE（製造装置市場）が拡大中' },
+  { ticker:'LRCX', name:'Lam Research',         cat:'equip',   catLabel:'製造装置',   revenue:171,  profit:84,   margin:49, tper:24,  fper:20,  verdict:'v-fair',  vLabel:'適正',      note:'エッチング・CVD装置に特化。NAND/DRAMメモリ製造に不可欠。サービス収入（装置保守）が約30%を占め安定収益源' },
+  { ticker:'KLAC', name:'KLA Corporation',      cat:'equip',   catLabel:'製造装置',   revenue:117,  profit:63,   margin:54, tper:30,  fper:26,  verdict:'v-fair',  vLabel:'適正',      note:'半導体製造工程の「検査・計測」装置で世界首位。製造の品質管理に不可欠。競合が少なく高い参入障壁を持つ' },
+  { ticker:'MU',   name:'Micron Technology',    cat:'memory',  catLabel:'メモリ',     revenue:374,  profit:149,  margin:40, tper:15,  fper:12,  verdict:'v-cheap', vLabel:'割安',      note:'DRAMとNANDの世界3強。AI向けHBM（高帯域メモリ）の需要急増。FY2025売上49%増。CHIPSファンドから最大$64億を受領予定' },
+  { ticker:'TXN',  name:'Texas Instruments',    cat:'analog',  catLabel:'アナログ',   revenue:177,  profit:101,  margin:57, tper:31,  fper:26,  verdict:'v-fair',  vLabel:'適正',      note:'アナログ・組み込み半導体の巨人。製品寿命が10年以上と長く在庫管理が重要。車載・産業向けが主力で景気サイクルの影響を受けやすい' },
+  { ticker:'ADI',  name:'Analog Devices',       cat:'analog',  catLabel:'アナログ',   revenue:99,   profit:60,   margin:61, tper:39,  fper:32,  verdict:'v-high',  vLabel:'やや割高',  note:'高精度アナログ・混合信号ICに特化。産業・通信・医療・車載向け。Maximの買収で規模拡大。景気回復局面で受注が急回復中' },
+  { ticker:'MRVL', name:'Marvell Technology',   cat:'design',  catLabel:'設計',       revenue:78,   profit:40,   margin:51, tper:57,  fper:43,  verdict:'v-high',  vLabel:'やや割高',  note:'AWS・MicrosoftのカスタムAI ASIC設計受託に特化。BroadcomとでAI ASIC市場を95%独占。2026年AI売上$110億を強気予想' },
+  { ticker:'INTC', name:'Intel',                cat:'idm',     catLabel:'IDM',        revenue:533,  profit:213,  margin:40, tper:null,fper:null, verdict:'v-none',  vLabel:'赤字',      note:'かつての半導体王者。製造技術でTSMCに大きく遅れ経営危機。2024年に大規模リストラ。ファウンドリ事業立て直しが最大課題' },
+  { ticker:'NXPI', name:'NXP Semiconductors',   cat:'design',  catLabel:'設計',       revenue:129,  profit:72,   margin:56, tper:19,  fper:17,  verdict:'v-cheap', vLabel:'割安',      note:'車載半導体（マイコン・センサー）で世界首位。EV普及で車載チップ需要が構造的に増加中。配当利回り2%台で長期保有向き' },
+  { ticker:'MPWR', name:'Monolithic Power Systems',cat:'design',catLabel:'設計',      revenue:25,   profit:16,   margin:56, tper:55,  fper:42,  verdict:'v-high',  vLabel:'やや割高',  note:'電源管理IC（PMIC）の高効率化で急成長。AI サーバーの電力管理需要が爆増。小型ながら高い成長率で市場から高評価' },
+  { ticker:'MCHP', name:'Microchip Technology',  cat:'design',  catLabel:'設計',      revenue:57,   profit:31,   margin:55, tper:22,  fper:18,  verdict:'v-cheap', vLabel:'割安',      note:'マイコン（MCU）とアナログの中堅。産業・車載・通信向け。高配当（利回り3%台）で財務保守的。景気回復で受注回復中' },
+  { ticker:'ON',   name:'ON Semiconductor',      cat:'idm',     catLabel:'IDM',       revenue:71,   profit:37,   margin:46, tper:16,  fper:14,  verdict:'v-cheap', vLabel:'割安',      note:'EV・産業向けSiC（炭化ケイ素）パワー半導体に戦略転換。テスラ・現代自動車が主要顧客。EV市場成長の直接受益者' },
+  { ticker:'LSCC', name:'Lattice Semiconductor', cat:'design',  catLabel:'設計',      revenue:5,    profit:3,    margin:60, tper:47,  fper:37,  verdict:'v-high',  vLabel:'やや割高',  note:'低消費電力FPGA（現場でプログラムできるチップ）に特化。AI推論・通信・産業向け。市場は小さいが高利益率を維持' },
+  { ticker:'AMKR', name:'Amkor Technology',      cat:'pkg',     catLabel:'パッケージ', revenue:66,   profit:13,   margin:20, tper:14,  fper:12,  verdict:'v-cheap', vLabel:'割安',      note:'半導体パッケージング（チップを基板に実装する工程）の世界大手。利益率は低いが安定収益。ASEと並ぶ業界の雄' },
+  { ticker:'ENTG', name:'Entegris',              cat:'equip',   catLabel:'材料・装置', revenue:38,   profit:17,   margin:45, tper:30,  fper:24,  verdict:'v-fair',  vLabel:'適正',      note:'半導体製造用化学材料・フィルタ・容器の専業。製造装置ではなく「消耗品」を売るため景気変動に強い安定収益モデル' },
+  { ticker:'GFS',  name:'GlobalFoundries',       cat:'foundry', catLabel:'ファウンドリ',revenue:66,   profit:26,   margin:39, tper:22,  fper:18,  verdict:'v-cheap', vLabel:'割安',      note:'レガシーノード（古い世代の製造プロセス）専門のファウンドリ。最先端ではないが車載・産業・通信では重要。米国内製造の恩恵も' },
+  { ticker:'ALGM', name:'Allegro Microsystems',  cat:'analog',  catLabel:'アナログ',   revenue:7,    profit:3,    margin:49, tper:34,  fper:28,  verdict:'v-fair',  vLabel:'適正',      note:'電流センサー・磁気センサーの専業。EV・産業向けモーター制御に不可欠。三菱電機が過半数株主' },
+  { ticker:'ACLS', name:'Axcelis Technologies',  cat:'equip',   catLabel:'製造装置',   revenue:11,   profit:4,    margin:38, tper:14,  fper:13,  verdict:'v-cheap', vLabel:'割安',      note:'イオン注入装置（シリコンに不純物を打ち込む工程）の専業。SiCパワー半導体製造需要で成長中' },
+  { ticker:'COHR', name:'Coherent Corp.',        cat:'equip',   catLabel:'光デバイス', revenue:57,   profit:26,   margin:46, tper:38,  fper:28,  verdict:'v-fair',  vLabel:'適正',      note:'レーザー・光学部品の複合企業。AI データセンター向け光通信モジュール需要が急増。II-VI・Finisar統合後の統合効果が出始め' },
+  { ticker:'SWKS', name:'Skyworks Solutions',    cat:'design',  catLabel:'設計',       revenue:42,   profit:21,   margin:50, tper:16,  fper:14,  verdict:'v-cheap', vLabel:'割安',      note:'スマホ向けRFフロントエンドモジュール（電波送受信部品）の大手。Appleが最大顧客で売上の50%超。スマホ低迷で株価が売られすぎ気味' },
+  { ticker:'WOLF', name:'Wolfspeed',             cat:'idm',     catLabel:'IDM',        revenue:8,    profit:2,    margin:25, tper:null,fper:null, verdict:'v-none',  vLabel:'赤字',      note:'SiC（炭化ケイ素）半導体専業。EV向けパワーデバイスに特化。赤字継続中だが長期的な成長ポテンシャルは大きい。資金調達が課題' },
+  { ticker:'AMBA', name:'Ambarella',             cat:'design',  catLabel:'設計',       revenue:4,    profit:2,    margin:65, tper:null,fper:80,  verdict:'v-very',  vLabel:'割高',      note:'AI視覚チップ（ドラカメ・セキュリティカメラ向けAI推論）の専業。売上は小さいが技術力は高い。黒字化はこれから' },
+  { ticker:'ALGN', name:'Allegro MicroSystems',  cat:'analog',  catLabel:'アナログ',   revenue:7,    profit:3,    margin:49, tper:34,  fper:28,  verdict:'v-fair',  vLabel:'適正',      note:'※ALGMと同一。電流・磁気センサー専業。EV・産業モーター向け需要が構造的に成長' },
+  { ticker:'IFNNY',name:'Infineon Technologies', cat:'idm',     catLabel:'IDM',        revenue:168,  profit:67,   margin:40, tper:18,  fper:15,  verdict:'v-cheap', vLabel:'割安',      note:'ドイツのパワー半導体・車載半導体大手。EV・再エネ向けIGBT・SiCで欧州首位。米国ADRとしてSOX構成。ユーロ安の恩恵も' },
 ];
 
-function buildRevLegend() {
-  const used = new Set();
-  revCompanies.forEach(c => c.segs.forEach(s => used.add(s.key)));
-  const el = document.getElementById('rev-legend');
-  used.forEach(key => {
-    const div = document.createElement('div');
-    div.className = 'leg-item';
-    div.innerHTML = `<div class="leg-dot" style="background:${COLORS[key]}"></div><span>${COLOR_LABELS[key]}</span>`;
-    el.appendChild(div);
-  });
-}
-
-function buildRevCards() {
-  const grid = document.getElementById('rev-cards');
-  revCompanies.forEach(co => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.style.setProperty('--card-accent', co.accent);
-
-    const bars = co.segs.map(s =>
-      `<div class="sbar-seg" style="flex:${s.pct};background:${COLORS[s.key]}" title="${s.name} ${s.pct}%"></div>`
-    ).join('');
-
-    const rows = co.segs.map(s => `
-      <div class="seg-row">
-        <div class="seg-dot" style="background:${COLORS[s.key]}"></div>
-        <div class="seg-name">${s.name}</div>
-        <div class="seg-mini-bg"><div class="seg-mini-fill" style="width:${s.pct}%;background:${COLORS[s.key]}"></div></div>
-        <div class="seg-pct" style="color:${COLORS[s.key]}">${s.pct}%</div>
-      </div>`).join('');
-
-    card.innerHTML = `
-      <div class="card-header">
-        <div><div class="co-name">${co.name}</div><div class="co-ticker">${co.ticker}</div></div>
-        <div class="rev-badge"><div class="rev-num">$${co.revenue}B</div><div class="rev-label">年間売上高</div></div>
-      </div>
-      <div class="stacked-bar">${bars}</div>
-      <div class="seg-list">${rows}</div>
-      <div class="card-note">${co.note}</div>`;
-    grid.appendChild(card);
-  });
-}
-
-// ========== TAB2: GROSS MARGIN ==========
-const marginData = [
-  { name:"ARM Holdings", ticker:"ARM",     tag:"t-ip",     tagLabel:"特許IP",       revenue:40,   profit:38.8, margin:97, note:"設計の設計。チップを作らず回路設計図のライセンスだけ販売。世界中のスマホチップの95%以上がARMベース" },
-  { name:"Nvidia",       ticker:"NVDA",    tag:"t-ai",     tagLabel:"AI GPU",       revenue:2159, profit:1534, margin:71, note:"AI GPUで世界シェア87%。CUDAエコシステムで競合を寄せ付けない。2025年度売上は約32兆円" },
-  { name:"Broadcom",     ticker:"AVGO",    tag:"t-infra",  tagLabel:"ネットワーク", revenue:683,  profit:463,  margin:68, note:"ネットワーク・通信チップ大手。VMware買収でソフト事業も拡大。Google・MetaのカスタムASICも受注" },
-  { name:"Qualcomm",     ticker:"QCOM",    tag:"t-mobile", tagLabel:"スマホSoC",    revenue:443,  profit:245,  margin:55, note:"Snapdragonがスマホ市場を席巻。5G特許も保有しライセンス収入が安定的" },
-  { name:"AMD",          ticker:"AMD",     tag:"t-cpu",    tagLabel:"CPU/GPU",      revenue:258,  profit:142,  margin:55, note:"CPUでIntelを脅かし、AIチップでNvidiaを追走。Meta・OpenAIと大型契約締結で急成長中" },
-  { name:"Marvell",      ticker:"MRVL",    tag:"t-infra",  tagLabel:"カスタムASIC", revenue:78,   profit:40,   margin:51, note:"クラウド大手向けカスタムAIチップ（ASIC）設計に特化。データセンター向けが急成長中" },
-  { name:"MediaTek",     ticker:"2454.TW", tag:"t-mobile", tagLabel:"スマホ/IoT",   revenue:195,  profit:90,   margin:46, note:"アジア最大のスマホ向けSoC。新興国スマホシェア首位。Nvidiaとの共同プロジェクトも展開" },
-  { name:"Cerebras",     ticker:"CBRS",    tag:"t-ai",     tagLabel:"AI専用チップ", revenue:5.1,  profit:2.1,  margin:41, note:"ウェーハ1枚丸ごと1チップという革新設計。2025年上場。粗利率は改善中も営業赤字継続" },
-];
-
-let marginSort = 'margin';
-
-function setMarginSort(key) {
-  marginSort = key;
-  document.querySelectorAll('#margin-sort-tabs .sort-tab').forEach((t,i)=>{
-    t.classList.toggle('active', ['margin','profit','revenue','name'][i]===key);
-  });
-  renderMargin();
-}
-
+// ===== UTILS =====
 function fmtB(n) {
+  if (!n && n!==0) return 'N/A';
   if (n >= 1000) return '$'+(n/1000).toFixed(1)+'T';
   if (n >= 10)   return '$'+n.toFixed(0)+'B';
   return '$'+n.toFixed(1)+'B';
 }
+function fmtPer(n) { return n ? n+'倍' : 'N/A'; }
 
-function renderMargin() {
-  const sorted = [...marginData].sort((a,b) => {
-    if (marginSort==='name') return a.name.localeCompare(b.name);
-    return b[marginSort]-a[marginSort];
+const catClass = { design:'c-design', idm:'c-idm', foundry:'c-foundry', equip:'c-equip', analog:'c-analog', memory:'c-memory', pkg:'c-pkg' };
+
+function rankClass(i, gold=false) {
+  if (i===0) return gold?'rg1':'r1';
+  if (i===1) return gold?'rg2':'r2';
+  if (i===2) return gold?'rg3':'r3';
+  return 'rn';
+}
+
+// ===== TAB SWITCH =====
+function showTab(name) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  const idx = ['overview','margin','per'].indexOf(name);
+  document.querySelectorAll('.nav-tab')[idx].classList.add('active');
+}
+
+// ===== OVERVIEW TAB =====
+let ovSort = 'revenue';
+function setOvSort(key) {
+  ovSort = key;
+  document.querySelectorAll('#ov-sort-tabs .sort-tab').forEach((t,i)=>{
+    t.classList.toggle('active',['revenue','margin','fper','name'][i]===key);
   });
-  const rc = ['r1','r2','r3'];
-  let html = '';
-  sorted.forEach((c,i) => {
-    const r = i<3?rc[i]:'rn';
+  renderOv();
+}
+function renderOv() {
+  const sorted = [...SOX].sort((a,b)=>{
+    if (ovSort==='name') return a.ticker.localeCompare(b.ticker);
+    if (ovSort==='fper') return (a.fper??99999)-(b.fper??99999);
+    return b[ovSort]-a[ovSort];
+  });
+  let html='';
+  sorted.forEach((c,i)=>{
+    const rc = rankClass(i);
+    const marginColor = c.margin>=65?'#d2a8ff':c.margin>=50?'#58a6ff':c.margin>=40?'#3fb950':'#e3b341';
     const barPct = Math.round((c.margin/97)*100);
-    const col = c.margin>=90?'#d2a8ff':c.margin>=65?'#58a6ff':c.margin>=50?'#3fb950':'#e3b341';
-    html += `
-      <tr title="${c.note}" style="cursor:default">
-        <td><span class="rank ${r}">${i+1}</span></td>
-        <td><div style="font-weight:bold;font-size:13px">${c.name}</div><div class="ticker">${c.ticker}</div></td>
-        <td><span class="tag ${c.tag}">${c.tagLabel}</span></td>
+    const fperColor = !c.fper?'#30363d':c.fper<=20?'#3fb950':c.fper<=35?'#58a6ff':c.fper<=60?'#e3b341':'#ffa198';
+    html+=`
+      <tr title="${c.note}">
+        <td><span class="rank ${rc}">${i+1}</span></td>
+        <td class="ticker-cell" style="color:#f59e0b">${c.ticker}</td>
+        <td><div style="font-size:11px;font-weight:bold">${c.name}</div></td>
+        <td><span class="cat ${catClass[c.cat]}">${c.catLabel}</span></td>
+        <td class="right">${fmtB(c.revenue)}</td>
+        <td class="right" style="color:${marginColor}">${fmtB(c.profit)}</td>
+        <td>
+          <div class="bar-wrap">
+            <div class="bar-bg"><div class="bar-fill" style="width:${barPct}%;background:${marginColor}"></div></div>
+            <span class="bar-pct" style="color:${marginColor}">${c.margin}%</span>
+          </div>
+        </td>
+        <td class="right">${fmtPer(c.tper)}</td>
+        <td class="right" style="color:${fperColor};font-weight:bold">${fmtPer(c.fper)}</td>
+        <td><span class="verdict ${c.verdict}">${c.vLabel}</span></td>
+      </tr>
+      <tr class="note-row"><td></td><td colspan="9">${c.note}</td></tr>`;
+  });
+  document.getElementById('ov-tbody').innerHTML=html;
+}
+
+// ===== MARGIN TAB =====
+let mgSort = 'margin';
+function setMgSort(key) {
+  mgSort = key;
+  document.querySelectorAll('#mg-sort-tabs .sort-tab').forEach((t,i)=>{
+    t.classList.toggle('active',['margin','profit','revenue','name'][i]===key);
+  });
+  renderMg();
+}
+function renderMg() {
+  const sorted = [...SOX].sort((a,b)=>{
+    if (mgSort==='name') return a.ticker.localeCompare(b.ticker);
+    return b[mgSort]-a[mgSort];
+  });
+  const rc3 = ['r1','r2','r3'];
+  let html='';
+  sorted.forEach((c,i)=>{
+    const rc = i<3?rc3[i]:'rn';
+    const barPct = Math.round((c.margin/97)*100);
+    const col = c.margin>=65?'#d2a8ff':c.margin>=55?'#58a6ff':c.margin>=45?'#3fb950':c.margin>=35?'#e3b341':'#ffa198';
+    html+=`
+      <tr title="${c.note}">
+        <td><span class="rank ${rc}">${i+1}</span></td>
+        <td class="ticker-cell" style="color:#f59e0b">${c.ticker}</td>
+        <td style="font-size:11px">${c.name}</td>
+        <td><span class="cat ${catClass[c.cat]}">${c.catLabel}</span></td>
         <td class="right">${fmtB(c.revenue)}</td>
         <td class="right" style="color:${col}">${fmtB(c.profit)}</td>
         <td>
@@ -555,69 +378,54 @@ function renderMargin() {
           </div>
         </td>
       </tr>
-      <tr class="note-row"><td></td><td colspan="5">${c.note}</td></tr>`;
+      <tr class="note-row"><td></td><td colspan="6">${c.note}</td></tr>`;
   });
-  document.getElementById('margin-tbody').innerHTML = html;
+  document.getElementById('mg-tbody').innerHTML=html;
 }
 
-// ========== TAB3: PER ==========
-const perData = [
-  { name:"Qualcomm",    ticker:"QCOM",    tag:"t-mobile", tagLabel:"スマホSoC",    trailingPer:19,  forwardPer:18,  verdict:"v-cheap",   verdictLabel:"割安",           note:"スマホ市場の低迷で株価が伸び悩み。PERも低め。配当が安定しており長期保有向き" },
-  { name:"MediaTek",    ticker:"2454.TW", tag:"t-mobile", tagLabel:"スマホ/IoT",   trailingPer:22,  forwardPer:20,  verdict:"v-cheap",   verdictLabel:"割安",           note:"新興国向けスマホで安定収益。NvidiaとのProject DIGITSがAI分野進出の足がかりに" },
-  { name:"Nvidia",      ticker:"NVDA",    tag:"t-ai",     tagLabel:"AI GPU",       trailingPer:33,  forwardPer:22,  verdict:"v-fair",    verdictLabel:"適正〜やや割安", note:"利益が急増しているためPERが急低下中。2年前は100倍超だったが今は30倍台。成長を考えると割安とも言える" },
-  { name:"Broadcom",    ticker:"AVGO",    tag:"t-infra",  tagLabel:"ネットワーク", trailingPer:62,  forwardPer:37,  verdict:"v-high",    verdictLabel:"やや割高",       note:"AI向けカスタムチップ需要が爆発的に伸びており成長期待が高い。VMware買収効果も織り込み済み" },
-  { name:"AMD",         ticker:"AMD",     tag:"t-cpu",    tagLabel:"CPU/GPU",      trailingPer:169, forwardPer:45,  verdict:"v-high",    verdictLabel:"やや割高",       note:"過去利益は少ないが今後の急成長への期待でPER高め。Meta・OpenAIとの大型契約が追い風" },
-  { name:"Marvell",     ticker:"MRVL",    tag:"t-infra",  tagLabel:"カスタムASIC", trailingPer:57,  forwardPer:43,  verdict:"v-high",    verdictLabel:"やや割高",       note:"AWS・MicrosoftとのカスタムASIC案件が急拡大。2026年AI ASIC売上$110億見込み" },
-  { name:"ARM Holdings",ticker:"ARM",     tag:"t-ip",     tagLabel:"特許IP",       trailingPer:416, forwardPer:163, verdict:"v-extreme", verdictLabel:"超割高（夢価格）",note:"利益の絶対額はまだ小さいが将来の特許収入への期待が膨大。AI時代にARMが全デバイスに普及する前提の株価" },
-  { name:"Cerebras",    ticker:"CBRS",    tag:"t-ai",     tagLabel:"AI専用チップ", trailingPer:null,forwardPer:null,verdict:"v-none",    verdictLabel:"計算不可（赤字）",note:"現在赤字のためPER計算不可。売上成長76%は評価されているが利益化が課題。投資は将来への賭け" },
-];
-
-let perSort = 'forwardPer';
-
+// ===== PER TAB =====
+let perSort = 'fper';
 function setPerSort(key) {
   perSort = key;
   document.querySelectorAll('#per-sort-tabs .sort-tab').forEach((t,i)=>{
-    t.classList.toggle('active', ['forwardPer','trailingPer','name'][i]===key);
+    t.classList.toggle('active',['fper','tper','name'][i]===key);
   });
   renderPer();
 }
-
 function renderPer() {
-  const sorted = [...perData].sort((a,b) => {
-    if (perSort==='name') return a.name.localeCompare(b.name);
+  const sorted = [...SOX].sort((a,b)=>{
+    if (perSort==='name') return a.ticker.localeCompare(b.ticker);
     return (a[perSort]??99999)-(b[perSort]??99999);
   });
-  const rc = ['rg1','rg2','rg3'];
-  let html = '';
-  sorted.forEach((c,i) => {
-    const r = i<3?rc[i]:'rn';
-    const fwd = c.forwardPer;
-    const barW = fwd ? Math.min(Math.round((fwd/200)*100),100) : 100;
-    const col = !fwd?'#30363d':fwd<=20?'#3fb950':fwd<=35?'#58a6ff':fwd<=60?'#e3b341':'#ffa198';
-    html += `
+  const rc3 = ['rg1','rg2','rg3'];
+  let html='';
+  sorted.forEach((c,i)=>{
+    const rc = i<3?rc3[i]:'rn';
+    const fper = c.fper;
+    const barW = fper ? Math.min(Math.round((fper/100)*100),100) : 100;
+    const col = !fper?'#30363d':fper<=15?'#3fb950':fper<=25?'#58a6ff':fper<=45?'#e3b341':'#ffa198';
+    html+=`
       <tr title="${c.note}">
-        <td><span class="rank ${r}">${i+1}</span></td>
-        <td><div style="font-weight:bold;font-size:13px">${c.name}</div><div class="ticker">${c.ticker}</div></td>
-        <td><span class="tag ${c.tag}">${c.tagLabel}</span></td>
-        <td class="right">${c.trailingPer?c.trailingPer+'倍':'N/A'}</td>
-        <td class="right" style="color:${col};font-weight:bold">${fwd?fwd+'倍':'N/A'}</td>
-        <td><span class="verdict ${c.verdict}">${c.verdictLabel}</span></td>
+        <td><span class="rank ${rc}">${i+1}</span></td>
+        <td class="ticker-cell" style="color:#f59e0b">${c.ticker}</td>
+        <td style="font-size:11px">${c.name}</td>
+        <td><span class="cat ${catClass[c.cat]}">${c.catLabel}</span></td>
+        <td class="right">${fmtPer(c.tper)}</td>
+        <td class="right" style="color:${col};font-weight:bold">${fmtPer(fper)}</td>
+        <td><span class="verdict ${c.verdict}">${c.vLabel}</span></td>
         <td>
           <div class="bar-wrap">
             <div class="bar-bg"><div class="bar-fill" style="width:${barW}%;background:${col}"></div></div>
           </div>
         </td>
       </tr>
-      <tr class="note-row"><td></td><td colspan="6">${c.note}</td></tr>`;
+      <tr class="note-row"><td></td><td colspan="7">${c.note}</td></tr>`;
   });
-  document.getElementById('per-tbody').innerHTML = html;
+  document.getElementById('per-tbody').innerHTML=html;
 }
 
-// ========== INIT ==========
-buildRevLegend();
-buildRevCards();
-renderMargin();
-renderPer();
+// INIT
+renderOv(); renderMg(); renderPer();
 </script>
 </body>
 </html>
