@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: #e6edf3; padding: 20px; }
+h1 { text-align: center; font-size: 17px; color: #58a6ff; margin-bottom: 4px; }
+.sub { text-align: center; font-size: 11px; color: #8b949e; margin-bottom: 16px; }
+.tabs { display: flex; gap: 6px; margin-bottom: 14px; justify-content: center; flex-wrap: wrap; }
+.tab { padding: 5px 16px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid #30363d; background: #161b22; color: #8b949e; transition: all 0.15s; }
+.tab.active, .tab:hover { background: #1f6feb; border-color: #1f6feb; color: #fff; }
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 540px; }
+th { background: #161b22; color: #8b949e; padding: 9px 10px; text-align: left; border-bottom: 1px solid #30363d; white-space: nowrap; }
+th.right { text-align: right; }
+td { padding: 9px 10px; border-bottom: 1px solid #21262d; vertical-align: middle; }
+td.right { text-align: right; font-family: monospace; font-size: 12px; }
+tr:hover td { background: #161b22; }
+.rank { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; font-size: 10px; font-weight: bold; }
+.r1 { background: #d2a8ff; color: #0d1117; }
+.r2 { background: #79c0ff; color: #0d1117; }
+.r3 { background: #3fb950; color: #0d1117; }
+.rn { background: #30363d; color: #8b949e; }
+.tag { font-size: 9px; padding: 2px 7px; border-radius: 10px; white-space: nowrap; }
+.t-ip     { background: #2d1b69; color: #d2a8ff; }
+.t-ai     { background: #1a4721; color: #3fb950; }
+.t-cpu    { background: #1c2d47; color: #79c0ff; }
+.t-mobile { background: #3d2208; color: #e3b341; }
+.t-infra  { background: #3d1c1c; color: #ffa198; }
+.bar-wrap { display: flex; align-items: center; gap: 6px; }
+.bar-bg { flex: 1; background: #21262d; border-radius: 3px; height: 9px; max-width: 150px; }
+.bar-fill { height: 9px; border-radius: 3px; transition: width 0.4s; }
+.bar-pct { font-size: 12px; font-family: monospace; min-width: 44px; text-align: right; font-weight: bold; }
+.ticker { font-size: 10px; color: #8b949e; }
+.note-row td { font-size: 10px; color: #484f58; font-style: italic; padding: 3px 10px 8px; border-bottom: 1px solid #30363d; }
+.section-note { margin-top: 14px; font-size: 10px; color: #484f58; line-height: 1.9; padding: 10px; background: #161b22; border-radius: 6px; border: 1px solid #21262d; }
+.section-note b { color: #8b949e; }
+</style>
+</head>
+<body>
+
+<h1>📊 主要ファブレス半導体企業　粗利益・粗利率 比較</h1>
+<p class="sub">最新決算（2025年度）基準 ／ 列名ボタンで並び替え可能</p>
+
+<div class="tabs">
+  <div class="tab active" onclick="setSort('margin')">粗利率順</div>
+  <div class="tab" onclick="setSort('profit')">粗利益額順</div>
+  <div class="tab" onclick="setSort('revenue')">売上順</div>
+  <div class="tab" onclick="setSort('name')">名前順</div>
+</div>
+
+<div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width:40px">順位</th>
+        <th>企業名</th>
+        <th>主な製品</th>
+        <th class="right">売上高</th>
+        <th class="right">粗利益</th>
+        <th>粗利率（バー）</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<div class="section-note">
+  ※ 売上・粗利益の単位は <b>億ドル</b>（例：$40B＝約6兆円）<br>
+  ※ <b>ARM</b> は特許ライセンス収入のみ。製造コストがほぼゼロのため97%という別次元の数字<br>
+  ※ <b>Broadcom</b> はソフトウェア（VMware）込み。半導体部門単体はやや低い<br>
+  ※ <b>Cerebras</b> は2025年実績。粗利率40%台だが研究開発費等で営業赤字継続<br>
+  ※ <b>MediaTek</b> はTWD→USD換算（概算）。スマホ向けSoCで新興国首位<br>
+  ※ 行にマウスを乗せると補足説明が表示されます
+</div>
+
+<script>
+const data = [
+  { name:"ARM Holdings",  ticker:"ARM",      tag:"t-ip",     tagLabel:"特許IP",        revenue:40,   profit:38.8, margin:97, note:"設計の設計。チップを作らず回路設計図（アーキテクチャ）のライセンスだけ販売。世界中のスマホチップの95%以上がARMベース" },
+  { name:"Nvidia",        ticker:"NVDA",     tag:"t-ai",     tagLabel:"AI GPU",        revenue:2159, profit:1534, margin:71, note:"AI GPUで世界シェア87%。CUDAエコシステムで競合を寄せ付けない。2025年度売上は2兆円超" },
+  { name:"Broadcom",      ticker:"AVGO",     tag:"t-infra",  tagLabel:"ネットワーク",  revenue:683,  profit:463,  margin:68, note:"ネットワーク・通信チップ大手。VMware買収でソフト事業も拡大。Google・Metaのカスタムチップも受注" },
+  { name:"Qualcomm",      ticker:"QCOM",     tag:"t-mobile", tagLabel:"スマホSoC",     revenue:443,  profit:245,  margin:55, note:"Snapdragonプロセッサがスマホ市場を席巻。5G関連特許も保有しライセンス収入が安定的" },
+  { name:"AMD",           ticker:"AMD",      tag:"t-cpu",    tagLabel:"CPU/GPU",       revenue:258,  profit:142,  margin:55, note:"CPUでIntelを脅かし、AIチップでNvidiaを追走。Meta・OpenAIと大型契約締結で急成長中" },
+  { name:"Marvell",       ticker:"MRVL",     tag:"t-infra",  tagLabel:"カスタムASIC",  revenue:78,   profit:40,   margin:51, note:"クラウド大手向けカスタムAIチップ（ASIC）設計に特化。データセンター向けが急成長中" },
+  { name:"MediaTek",      ticker:"2454.TW",  tag:"t-mobile", tagLabel:"スマホ/IoT",    revenue:195,  profit:90,   margin:46, note:"アジア最大のスマホ向けSoC。新興国スマホシェア首位。Nvidiaとの共同プロジェクトも展開" },
+  { name:"Cerebras",      ticker:"CBRS",     tag:"t-ai",     tagLabel:"AI専用チップ",  revenue:5.1,  profit:2.1,  margin:41, note:"ウェーハ1枚丸ごと1チップという革新設計。2025年上場。粗利率は改善中も営業赤字継続" },
+];
+
+let sortKey = 'margin';
+
+function setSort(key) {
+  sortKey = key;
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', ['margin','profit','revenue','name'][i] === key);
+  });
+  render();
+}
+
+function fmt(n) {
+  if (n >= 1000) return '$' + (n/1000).toFixed(1) + 'T';
+  if (n >= 10) return '$' + n.toFixed(0) + 'B';
+  return '$' + n.toFixed(1) + 'B';
+}
+
+function render() {
+  const sorted = [...data].sort((a, b) => {
+    if (sortKey === 'name') return a.name.localeCompare(b.name);
+    return b[sortKey] - a[sortKey];
+  });
+
+  const maxMargin = 97;
+  const rankClasses = ['r1','r2','r3'];
+
+  let html = '';
+  sorted.forEach((c, i) => {
+    const rc = i < 3 ? rankClasses[i] : 'rn';
+    const barPct = Math.round((c.margin / maxMargin) * 100);
+    const barColor = c.margin >= 90 ? '#d2a8ff'
+                   : c.margin >= 65 ? '#58a6ff'
+                   : c.margin >= 50 ? '#3fb950'
+                   : '#e3b341';
+
+    html += `
+      <tr title="${c.note}" style="cursor:default">
+        <td><span class="rank ${rc}">${i+1}</span></td>
+        <td>
+          <div style="font-weight:bold;font-size:13px">${c.name}</div>
+          <div class="ticker">${c.ticker}</div>
+        </td>
+        <td><span class="tag ${c.tag}">${c.tagLabel}</span></td>
+        <td class="right">${fmt(c.revenue)}</td>
+        <td class="right" style="color:${barColor}">${fmt(c.profit)}</td>
+        <td>
+          <div class="bar-wrap">
+            <div class="bar-bg">
+              <div class="bar-fill" style="width:${barPct}%;background:${barColor}"></div>
+            </div>
+            <span class="bar-pct" style="color:${barColor}">${c.margin}%</span>
+          </div>
+        </td>
+      </tr>
+      <tr class="note-row">
+        <td></td>
+        <td colspan="5">${c.note}</td>
+      </tr>`;
+  });
+
+  document.getElementById('tbody').innerHTML = html;
+}
+
+render();
+</script>
+</body>
+</html>
