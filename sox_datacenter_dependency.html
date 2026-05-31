@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOX30銘柄 データセンター売上依存率</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080c10;
+  --panel: #0d1318;
+  --panel2: #111820;
+  --border: #1a2330;
+  --border2: #21262d;
+  --text: #d4e0ec;
+  --muted: #4a6070;
+  --muted2: #8b949e;
+  --accent: #00d4ff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Noto Sans JP', sans-serif; min-height: 100vh; padding-bottom: 60px; }
+
+/* HEADER */
+.site-header { background: linear-gradient(180deg, #071218 0%, var(--bg) 100%); border-bottom: 1px solid var(--border); padding: 32px 24px 24px; text-align: center; }
+.eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 4px; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; }
+.site-header h1 { font-size: clamp(18px, 4vw, 28px); font-weight: 900; color: #fff; margin-bottom: 6px; }
+.site-header .desc { font-size: 11px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; }
+.sox-badge { display: inline-block; margin-top: 10px; padding: 4px 14px; background: #071a1f; border: 1px solid var(--accent); border-radius: 20px; font-size: 11px; color: var(--accent); font-family: 'IBM Plex Mono', monospace; }
+
+/* NAV */
+.nav-tabs { display: flex; justify-content: center; gap: 4px; padding: 12px 20px; background: var(--panel); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; flex-wrap: wrap; }
+.nav-tab { padding: 7px 18px; border-radius: 24px; font-size: 12px; font-weight: 700; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--muted2); transition: all 0.2s; white-space: nowrap; }
+.nav-tab:hover { color: var(--text); border-color: #2a3d50; }
+.nav-tab.active { background: var(--accent); border-color: var(--accent); color: #000; }
+
+/* SECTION */
+.section { display: none; padding: 24px 16px 48px; max-width: 1100px; margin: 0 auto; }
+.section.active { display: block; }
+.section-title { font-size: 15px; font-weight: 900; color: #fff; margin-bottom: 3px; }
+.section-sub { font-size: 11px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; margin-bottom: 18px; }
+
+/* SORT TABS */
+.sort-tabs { display: flex; gap: 5px; margin-bottom: 14px; flex-wrap: wrap; }
+.sort-tab { padding: 5px 14px; border-radius: 20px; font-size: 11px; cursor: pointer; border: 1px solid var(--border2); background: var(--panel2); color: var(--muted2); transition: all 0.15s; }
+.sort-tab.active, .sort-tab:hover { background: #1f6feb; border-color: #1f6feb; color: #fff; }
+
+/* TABLE */
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 620px; }
+th { background: var(--panel2); color: var(--muted2); padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; font-size: 10px; }
+th.right { text-align: right; }
+td { padding: 8px 10px; border-bottom: 1px solid var(--border2); vertical-align: middle; }
+td.right { text-align: right; font-family: 'IBM Plex Mono', monospace; }
+tr:hover td { background: #0f1923; }
+.note-row td { font-size: 9px; color: var(--muted); font-style: italic; padding: 2px 10px 7px; border-bottom: 1px solid var(--border2); line-height: 1.5; }
+
+/* RANK */
+.rank { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; font-size: 9px; font-weight: bold; flex-shrink: 0; }
+.r1 { background: #00d4ff; color: #000; }
+.r2 { background: #38bdf8; color: #000; }
+.r3 { background: #7dd3fc; color: #000; }
+.rn { background: #1e2d3d; color: var(--muted2); }
+
+/* TICKER */
+.ticker-cell { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 700; color: var(--accent); }
+
+/* CAT */
+.cat { font-size: 9px; padding: 2px 6px; border-radius: 8px; white-space: nowrap; }
+.c-design  { background: #1a4721; color: #3fb950; }
+.c-idm     { background: #1c2d47; color: #79c0ff; }
+.c-foundry { background: #2d1b69; color: #d2a8ff; }
+.c-equip   { background: #3d2208; color: #e3b341; }
+.c-analog  { background: #3d1c1c; color: #ffa198; }
+.c-memory  { background: #1a2e10; color: #84cc16; }
+.c-pkg     { background: #21262d; color: #8b949e; }
+
+/* DC BAR */
+.dc-bar-wrap { display: flex; align-items: center; gap: 6px; }
+.dc-bar-bg { flex: 1; background: var(--border2); border-radius: 3px; height: 10px; max-width: 180px; }
+.dc-bar-fill { height: 10px; border-radius: 3px; transition: width 0.4s; }
+.dc-pct { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 700; min-width: 42px; text-align: right; }
+
+/* DEPENDENCY BADGE */
+.dep { font-size: 9px; padding: 2px 7px; border-radius: 8px; white-space: nowrap; }
+.dep-core    { background: #071a1f; color: #00d4ff; border: 1px solid #00d4ff44; }
+.dep-heavy   { background: #0a1f2d; color: #38bdf8; border: 1px solid #38bdf844; }
+.dep-mid     { background: #1a2e10; color: #84cc16; border: 1px solid #84cc1644; }
+.dep-light   { background: #2d2208; color: #e3b341; border: 1px solid #e3b34144; }
+.dep-minimal { background: #21262d; color: #8b949e; border: 1px solid #8b949e44; }
+.dep-indirect{ background: #2d1b1b; color: #ffa198; border: 1px solid #ffa19844; }
+
+/* INFO BOX */
+.info-box { margin-top: 16px; font-size: 10px; color: var(--muted); line-height: 1.9; padding: 12px 14px; background: var(--panel2); border-radius: 6px; border: 1px solid var(--border); }
+.info-box b { color: var(--muted2); }
+
+/* KPI CARDS */
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
+.kpi-card { background: var(--panel2); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+.kpi-label { font-size: 9px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; margin-bottom: 4px; letter-spacing: 1px; }
+.kpi-val { font-size: 20px; font-weight: 900; color: var(--accent); font-family: 'IBM Plex Mono', monospace; }
+.kpi-sub { font-size: 9px; color: var(--muted); margin-top: 3px; }
+
+/* CARD GRID (カード表示) */
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.dc-card { background: var(--panel2); border: 1px solid var(--border); border-radius: 10px; padding: 18px; position: relative; overflow: hidden; transition: border-color 0.2s; }
+.dc-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--card-color, var(--accent)); opacity: 0.7; }
+.dc-card:hover { border-color: #2a3d50; }
+.dc-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+.dc-card-name { font-size: 15px; font-weight: 900; color: #fff; }
+.dc-card-ticker { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); margin-top: 2px; }
+.dc-card-pct-big { font-family: 'IBM Plex Mono', monospace; font-size: 26px; font-weight: 900; color: var(--card-color, var(--accent)); line-height: 1; }
+.dc-card-pct-label { font-size: 9px; color: var(--muted); }
+.dc-card-bar-bg { width: 100%; height: 8px; background: var(--border2); border-radius: 4px; margin-bottom: 10px; overflow: hidden; }
+.dc-card-bar-fill { height: 8px; border-radius: 4px; }
+.dc-card-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.dc-card-note { font-size: 10px; color: var(--muted); margin-top: 10px; line-height: 1.6; padding-top: 10px; border-top: 1px solid var(--border); }
+
+/* LEGEND */
+.legend-row { display: flex; flex-wrap: wrap; gap: 8px 16px; padding: 10px 14px; background: var(--panel2); border: 1px solid var(--border); border-radius: 7px; margin-bottom: 18px; }
+.leg { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--muted); }
+.leg-dot { width: 9px; height: 9px; border-radius: 2px; }
+
+/* FOOTER */
+.footer-note { margin-top: 16px; font-size: 10px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; line-height: 1.9; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <div class="eyebrow">SOX · Data Center Revenue Dependency · FY2025</div>
+  <h1>SOX30銘柄<br>データセンター売上 依存率</h1>
+  <p class="desc">AI・クラウド需要がどの企業の売上をどれだけ支えているか　2025年度実績</p>
+  <div class="sox-badge">SOX 13,087 pts　｜　30銘柄　｜　2026年5月末時点</div>
+</div>
+
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="showTab('table')">📊 一覧表</div>
+  <div class="nav-tab" onclick="showTab('cards')">🃏 カード表示</div>
+</div>
+
+<!-- TAB1: TABLE -->
+<div class="section active" id="tab-table">
+  <div class="section-title">📊 データセンター売上依存率 一覧</div>
+  <div class="section-sub">DC依存率 = データセンター向け売上 ÷ 総売上 ／ ボタンで並び替え可能　　行にマウスを乗せると補足説明が表示されます</div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-label">DC依存率 最高</div><div class="kpi-val">88%</div><div class="kpi-sub">NVDA（AIデータセンターGPU）</div></div>
+    <div class="kpi-card"><div class="kpi-label">DC関連売上 最大</div><div class="kpi-val">$1,152B</div><div class="kpi-sub">NVDA（2025年度）</div></div>
+    <div class="kpi-card"><div class="kpi-label">DC依存率 上昇最速</div><div class="kpi-val">MRVL</div><div class="kpi-sub">75%→急成長（前年比+78%）</div></div>
+    <div class="kpi-card"><div class="kpi-label">間接依存（装置）</div><div class="kpi-val">AMAT</div><div class="kpi-sub">DCチップ製造装置最大手</div></div>
+  </div>
+
+  <div class="sort-tabs" id="tbl-sort-tabs">
+    <div class="sort-tab active" onclick="setTblSort('dcPct')">DC依存率順</div>
+    <div class="sort-tab" onclick="setTblSort('dcRev')">DC売上額順</div>
+    <div class="sort-tab" onclick="setTblSort('totalRev')">総売上順</div>
+    <div class="sort-tab" onclick="setTblSort('name')">名前順</div>
+  </div>
+
+  <div class="legend-row">
+    <div class="leg"><div class="leg-dot" style="background:#00d4ff"></div>コア依存（80%超）</div>
+    <div class="leg"><div class="leg-dot" style="background:#38bdf8"></div>高依存（50〜80%）</div>
+    <div class="leg"><div class="leg-dot" style="background:#84cc16"></div>中依存（20〜50%）</div>
+    <div class="leg"><div class="leg-dot" style="background:#e3b341"></div>低依存（5〜20%）</div>
+    <div class="leg"><div class="leg-dot" style="background:#8b949e"></div>最小限（5%未満）</div>
+    <div class="leg"><div class="leg-dot" style="background:#ffa198"></div>間接依存（装置・材料）</div>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th style="width:32px">順</th>
+        <th>Ticker</th>
+        <th>企業名</th>
+        <th>カテゴリ</th>
+        <th class="right">総売上</th>
+        <th class="right">DC売上（推定）</th>
+        <th>DC依存率</th>
+        <th>依存度</th>
+      </tr></thead>
+      <tbody id="tbl-tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="info-box">
+    ※ DC売上は各社IR・決算資料・アナリストレポートをもとに推計。一部は間接的な依存度（装置・材料）<br>
+    ※ <b>製造装置各社（AMAT・LRCX・KLAC・ASML）</b>はデータセンター向けチップを「作る機械」を売るため間接依存として分類<br>
+    ※ <b>INTC・WOLF</b>は赤字継続中　※ <b>TSM</b>は台湾上場の米国ADR　※ 単位は億ドル（B）<br>
+    ※ 2025年度（各社決算期異なる）実績ベース。一部推計含む
+  </div>
+</div>
+
+<!-- TAB2: CARDS -->
+<div class="section" id="tab-cards">
+  <div class="section-title">🃏 カード表示　データセンター依存率</div>
+  <div class="section-sub">依存率が高い順に表示　　DC依存率 = データセンター向け売上 ÷ 総売上</div>
+  <div class="cards-grid" id="cards-grid"></div>
+  <div class="footer-note">
+    ※ 製造装置（AMAT・LRCX・KLAC・ASML・ENTG・ACLS）は間接依存として特別表示<br>
+    ※ 数値は各社IR・決算資料・アナリストレポートをもとに推計（2025年度）
+  </div>
+</div>
+
+<script>
+const catClass = {
+  design: 'c-design', idm: 'c-idm', foundry: 'c-foundry',
+  equip: 'c-equip', analog: 'c-analog', memory: 'c-memory', pkg: 'c-pkg'
+};
+const catLabel = {
+  design: '設計', idm: 'IDM', foundry: 'ファウンドリ',
+  equip: '製造装置', analog: 'アナログ', memory: 'メモリ', pkg: 'パッケージ'
+};
+
+// dcPct: データセンター向け売上依存率(%)
+// indirect: 装置・材料として間接依存
+const DATA = [
+  { ticker:'NVDA',  name:'Nvidia',               cat:'design',  totalRev:2159, dcPct:88, indirect:false,
+    dep:'dep-core',    depLabel:'コア依存',
+    note:'AI GPUがDC売上の中心。FY2025のデータセンター売上は$1,152億と前年比142%増。クラウド大手（AWS・Azure・GCP）が売上の約50%を占める' },
+  { ticker:'MRVL',  name:'Marvell Technology',   cat:'design',  totalRev:78,   dcPct:75, indirect:false,
+    dep:'dep-heavy',   depLabel:'高依存',
+    note:'カスタムAI ASIC（AWS・Microsoft向け）がDC売上の75%超。前年比+78%の急成長。BroadcomとともにAI ASIC市場の95%を独占' },
+  { ticker:'AVGO',  name:'Broadcom',             cat:'design',  totalRev:683,  dcPct:55, indirect:false,
+    dep:'dep-heavy',   depLabel:'高依存',
+    note:'AI向けカスタムASIC・ネットワークチップがDC売上の55%超。Google向けTPU設計が主力。AI売上は2025年度に$200億超（+65%）' },
+  { ticker:'AMD',   name:'AMD',                  cat:'design',  totalRev:258,  dcPct:49, indirect:false,
+    dep:'dep-mid',     depLabel:'中依存',
+    note:'EPYC CPU＋Instinct GPUがDC売上の49%。前年比+94%と急成長。Meta・OpenAIとの6GW契約が2026年以降の最大材料' },
+  { ticker:'MU',    name:'Micron Technology',    cat:'memory',  totalRev:374,  dcPct:45, indirect:false,
+    dep:'dep-mid',     depLabel:'中依存',
+    note:'AI向けHBM（高帯域メモリ）需要が急増しDC依存率が急上昇。HBMはH100・H200・Blackwell GPUに搭載される必須部品' },
+  { ticker:'TSM',   name:'TSMC',                 cat:'foundry', totalRev:880,  dcPct:42, indirect:false,
+    dep:'dep-mid',     depLabel:'中依存',
+    note:'HPC（高性能コンピューティング）・AI向けが売上の42%。Nvidia・AMD・Appleのハイエンドチップを全て製造。2nmプロセスが主力' },
+  { ticker:'INTC',  name:'Intel',                cat:'idm',     totalRev:533,  dcPct:38, indirect:false,
+    dep:'dep-mid',     depLabel:'中依存',
+    note:'データセンター＆AI部門（DCAI）が売上の38%。ただし赤字継続中でAMD・NvidiaへのシェアロストがXeon CPUを直撃。ファウンドリ事業立て直しが最大課題' },
+  { ticker:'ADI',   name:'Analog Devices',       cat:'analog',  totalRev:99,   dcPct:35, indirect:false,
+    dep:'dep-mid',     depLabel:'中依存',
+    note:'電源管理・光通信IC向けがDC依存率約35%。FY2025のDC売上は前年比+50%と急成長。2026年5月にAI電力管理専業Empowerを$15億で買収' },
+  { ticker:'MPWR',  name:'Monolithic Power Systems',cat:'design',totalRev:25,  dcPct:35, indirect:false,
+    dep:'dep-mid',     depLabel:'中依存',
+    note:'AIサーバーの電源管理IC（PMIC）がDCの35%超を占める。GPUラック1台あたりの電力消費増がMPWRの売上を直接押し上げる構造' },
+  { ticker:'COHR',  name:'Coherent Corp.',        cat:'equip',   totalRev:57,   dcPct:32, indirect:false,
+    dep:'dep-mid',     depLabel:'中依存',
+    note:'AIデータセンター間を結ぶ光通信モジュールがDCの32%超。800G・1.6Tの超高速光トランシーバー需要が急増。Nvidiaの発注が急拡大' },
+  { ticker:'KLAC',  name:'KLA Corporation',       cat:'equip',   totalRev:117,  dcPct:null, indirect:true,
+    dep:'dep-indirect', depLabel:'間接依存（装置）',
+    note:'DC向けチップを製造するための「検査・計測」装置を販売。直接DC向けではないがDC投資増→チップ増産→KLA需要増という連鎖で恩恵。中国売上が33%でリスク' },
+  { ticker:'LRCX',  name:'Lam Research',          cat:'equip',   totalRev:171,  dcPct:null, indirect:true,
+    dep:'dep-indirect', depLabel:'間接依存（装置）',
+    note:'NAND/DRAM製造用エッチング装置が主力。DC向けメモリ需要急増→増産→LRCX需要増という構造。サービス収入が約30%を占め安定' },
+  { ticker:'AMAT',  name:'Applied Materials',     cat:'equip',   totalRev:277,  dcPct:null, indirect:true,
+    dep:'dep-indirect', depLabel:'間接依存（装置）',
+    note:'半導体成膜・エッチング装置世界最大手。DC向けロジック・メモリ製造装置の需要増が直接売上に連動。FY2025年間売上$284億（最高益）' },
+  { ticker:'ASML',  name:'ASML Holding',          cat:'equip',   totalRev:352,  dcPct:null, indirect:true,
+    dep:'dep-indirect', depLabel:'間接依存（装置）',
+    note:'EUV露光装置の世界唯一のメーカー。最先端DCチップ製造には必須。米中規制で中国向け輸出制限があるがDC向けチップ需要増で需要は堅調' },
+  { ticker:'ENTG',  name:'Entegris',              cat:'equip',   totalRev:38,   dcPct:null, indirect:true,
+    dep:'dep-indirect', depLabel:'間接依存（材料）',
+    note:'半導体製造用化学材料・フィルタの専業。DC向けチップ増産で消耗品需要が増加。景気変動に強い安定収益モデル' },
+  { ticker:'ACLS',  name:'Axcelis Technologies',  cat:'equip',   totalRev:11,   dcPct:null, indirect:true,
+    dep:'dep-indirect', depLabel:'間接依存（装置）',
+    note:'イオン注入装置の専業。SiCパワー半導体（DC電源用）製造需要で成長。DC電力管理向けSiCデバイスの製造に不可欠' },
+  { ticker:'QCOM',  name:'Qualcomm',              cat:'design',  totalRev:443,  dcPct:10, indirect:false,
+    dep:'dep-light',   depLabel:'低依存',
+    note:'スマホSoC（87%）が主力でDC依存は低い。ただしAI推論用チップ「Cloud AI 100」でDC市場参入を強化中。車載・AI PCへの多角化も進行' },
+  { ticker:'NXPI',  name:'NXP Semiconductors',    cat:'design',  totalRev:129,  dcPct:10, indirect:false,
+    dep:'dep-light',   depLabel:'低依存',
+    note:'車載・産業が主力でDC依存は低いが急増中。AI DCの電源管理・冷却制御用マイコン需要が拡大。2025年にKinara（エッジAI）を買収' },
+  { ticker:'TXN',   name:'Texas Instruments',     cat:'analog',  totalRev:177,  dcPct:12, indirect:false,
+    dep:'dep-light',   depLabel:'低依存（急増中）',
+    note:'主力は産業・車載だがDC向けは2025年に前年比+70%と急増。アナログ電源管理・信号処理ICがAIサーバーの電力制御で需要急増中' },
+  { ticker:'ON',    name:'ON Semiconductor',      cat:'idm',     totalRev:71,   dcPct:10, indirect:false,
+    dep:'dep-light',   depLabel:'低依存',
+    note:'SiCパワー半導体でEV市場が主力だがDC電源向けも拡大中。AIサーバーの電力変換効率改善需要でSiC・GaNが注目される' },
+  { ticker:'MCHP',  name:'Microchip Technology',  cat:'design',  totalRev:57,   dcPct:8, indirect:false,
+    dep:'dep-light',   depLabel:'低依存',
+    note:'マイコン（MCU）・アナログが主力。産業・車載向けが大半だがサーバー管理チップ（BMC）でDCにも一定の存在感' },
+  { ticker:'IFNNY', name:'Infineon Technologies', cat:'idm',     totalRev:168,  dcPct:8, indirect:false,
+    dep:'dep-light',   depLabel:'低依存',
+    note:'EV・産業向けパワー半導体が主力。AIデータセンターの電力効率化（IGBT・SiC）での需要増が期待されているが現状は小さい' },
+  { ticker:'LSCC',  name:'Lattice Semiconductor', cat:'design',  totalRev:5,    dcPct:18, indirect:false,
+    dep:'dep-light',   depLabel:'低依存（成長中）',
+    note:'低消費電力FPGAでAI推論・サーバー管理に使われDC向けが18%超に成長中。エッジAI・AI PCへの展開も進行' },
+  { ticker:'ADI_',  name:'Analog Devices',        cat:'analog',  totalRev:99,   dcPct:35, indirect:false,
+    dep:'dep-mid',     depLabel:'中依存',
+    note:'（ADIの再掲防止のため省略）' },
+  { ticker:'SWKS',  name:'Skyworks Solutions',    cat:'design',  totalRev:42,   dcPct:3, indirect:false,
+    dep:'dep-minimal', depLabel:'最小限',
+    note:'スマホ向けRFが売上の80%超でDC依存はほぼなし。Apple依存が高くスマホ市場の影響を直接受ける' },
+  { ticker:'AMKR',  name:'Amkor Technology',      cat:'pkg',     totalRev:66,   dcPct:15, indirect:false,
+    dep:'dep-light',   depLabel:'低依存',
+    note:'パッケージングは最終工程なのでDC向けチップ増産の恩恵を間接的に受ける。AI向けアドバンストパッケージング（CoWoS等）対応で成長中' },
+  { ticker:'GFS',   name:'GlobalFoundries',       cat:'foundry', totalRev:66,   dcPct:5, indirect:false,
+    dep:'dep-minimal', depLabel:'最小限',
+    note:'レガシーノード専門ファウンドリで最先端DC向けは少ない。車載・産業・通信向けが主力。米国内製造でCHIPS法の恩恵を受ける' },
+  { ticker:'ALGM',  name:'Allegro Microsystems',  cat:'analog',  totalRev:7,    dcPct:5, indirect:false,
+    dep:'dep-minimal', depLabel:'最小限',
+    note:'電流・磁気センサー専業でEV・産業が主力。DC向けは電流センシング用途で少量存在するが依存度は低い' },
+  { ticker:'WOLF',  name:'Wolfspeed',             cat:'idm',     totalRev:8,    dcPct:5, indirect:false,
+    dep:'dep-minimal', depLabel:'最小限（赤字）',
+    note:'SiCウェーハ・デバイス専業でEV向けが主力。DC電源用SiCは今後の成長領域だが現状は極めて小さい。赤字継続中' },
+  { ticker:'AMBA',  name:'Ambarella',             cat:'design',  totalRev:4,    dcPct:2, indirect:false,
+    dep:'dep-minimal', depLabel:'最小限',
+    note:'AI視覚チップ（ドラカメ・セキュリティカメラ）専業でDC依存はほぼなし。エッジAI市場に特化した小型企業' },
+].filter(d => d.ticker !== 'ADI_'); // 重複除去
+
+// ===== DC COLOR =====
+function getDcColor(pct, indirect) {
+  if (indirect) return '#ffa198';
+  if (!pct) return '#8b949e';
+  if (pct >= 80) return '#00d4ff';
+  if (pct >= 50) return '#38bdf8';
+  if (pct >= 20) return '#84cc16';
+  if (pct >= 5)  return '#e3b341';
+  return '#8b949e';
+}
+
+function fmtB(n) {
+  if (!n && n !== 0) return 'N/A';
+  if (n >= 1000) return '$' + (n/1000).toFixed(1) + 'T';
+  if (n >= 10)   return '$' + n.toFixed(0) + 'B';
+  return '$' + n.toFixed(1) + 'B';
+}
+
+function dcRevStr(d) {
+  if (d.indirect) return '間接';
+  if (!d.dcPct) return 'N/A';
+  const rev = (d.totalRev * d.dcPct / 100);
+  return fmtB(rev);
+}
+
+// ===== TAB SWITCH =====
+function showTab(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.querySelectorAll('.nav-tab')[['table','cards'].indexOf(name)].classList.add('active');
+}
+
+// ===== TABLE =====
+let tblSort = 'dcPct';
+function setTblSort(key) {
+  tblSort = key;
+  document.querySelectorAll('#tbl-sort-tabs .sort-tab').forEach((t, i) => {
+    t.classList.toggle('active', ['dcPct','dcRev','totalRev','name'][i] === key);
+  });
+  renderTable();
+}
+
+function renderTable() {
+  const sorted = [...DATA].sort((a, b) => {
+    if (tblSort === 'name') return a.ticker.localeCompare(b.ticker);
+    if (tblSort === 'dcPct') {
+      const av = a.indirect ? -1 : (a.dcPct ?? -2);
+      const bv = b.indirect ? -1 : (b.dcPct ?? -2);
+      return bv - av;
+    }
+    if (tblSort === 'dcRev') {
+      const av = a.indirect ? -1 : (a.totalRev * (a.dcPct ?? 0) / 100);
+      const bv = b.indirect ? -1 : (b.totalRev * (b.dcPct ?? 0) / 100);
+      return bv - av;
+    }
+    return b.totalRev - a.totalRev;
+  });
+
+  const rc = ['r1','r2','r3'];
+  let html = '';
+  let rank = 0;
+  sorted.forEach((d, i) => {
+    if (!d.indirect && d.dcPct !== null) rank++;
+    const r = rank <= 3 ? rc[rank-1] : 'rn';
+    const color = getDcColor(d.dcPct, d.indirect);
+    const barW = d.indirect ? 100 : Math.round(((d.dcPct ?? 0) / 100) * 100);
+    const barStyle = d.indirect
+      ? `repeating-linear-gradient(45deg, #ffa19833, #ffa19833 4px, transparent 4px, transparent 8px)`
+      : `${color}`;
+
+    const pctDisplay = d.indirect ? '間接' : (d.dcPct !== null ? d.dcPct + '%' : 'N/A');
+
+    html += `
+      <tr title="${d.note}">
+        <td><span class="rank ${d.indirect ? 'rn' : r}">${d.indirect ? '—' : (rank <= 30 ? rank : '—')}</span></td>
+        <td class="ticker-cell">${d.ticker}</td>
+        <td style="font-size:11px;font-weight:bold">${d.name}</td>
+        <td><span class="cat ${catClass[d.cat]}">${catLabel[d.cat]}</span></td>
+        <td class="right">${fmtB(d.totalRev)}</td>
+        <td class="right" style="color:${color}">${dcRevStr(d)}</td>
+        <td>
+          <div class="dc-bar-wrap">
+            <div class="dc-bar-bg">
+              <div class="dc-bar-fill" style="width:${barW}%;background:${d.indirect ? 'repeating-linear-gradient(45deg,#ffa19855,#ffa19855 4px,transparent 4px,transparent 8px)' : color}"></div>
+            </div>
+            <span class="dc-pct" style="color:${color}">${pctDisplay}</span>
+          </div>
+        </td>
+        <td><span class="dep ${d.dep}">${d.depLabel}</span></td>
+      </tr>
+      <tr class="note-row"><td></td><td colspan="7">${d.note}</td></tr>`;
+  });
+  document.getElementById('tbl-tbody').innerHTML = html;
+}
+
+// ===== CARDS =====
+function buildCards() {
+  const sorted = [...DATA].sort((a, b) => {
+    const av = a.indirect ? -1 : (a.dcPct ?? -2);
+    const bv = b.indirect ? -1 : (b.dcPct ?? -2);
+    return bv - av;
+  });
+
+  const grid = document.getElementById('cards-grid');
+  sorted.forEach(d => {
+    const color = getDcColor(d.dcPct, d.indirect);
+    const barW = d.indirect ? 80 : (d.dcPct ?? 0);
+    const pctDisplay = d.indirect ? '間接依存' : (d.dcPct !== null ? d.dcPct + '%' : 'N/A');
+
+    const card = document.createElement('div');
+    card.className = 'dc-card';
+    card.style.setProperty('--card-color', color);
+    card.innerHTML = `
+      <div class="dc-card-header">
+        <div>
+          <div class="dc-card-name">${d.name}</div>
+          <div class="dc-card-ticker">${d.ticker} ／ ${catLabel[d.cat]}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="dc-card-pct-big">${pctDisplay}</div>
+          <div class="dc-card-pct-label">DC依存率</div>
+        </div>
+      </div>
+      <div class="dc-card-bar-bg">
+        <div class="dc-card-bar-fill" style="width:${barW}%;background:${d.indirect ? 'repeating-linear-gradient(45deg,#ffa19877,#ffa19877 4px,transparent 4px,transparent 8px)' : color}"></div>
+      </div>
+      <div class="dc-card-meta">
+        <span class="dep ${d.dep}">${d.depLabel}</span>
+        <span style="font-size:10px;color:var(--muted);font-family:monospace">総売上 ${fmtB(d.totalRev)}</span>
+        ${!d.indirect && d.dcPct ? `<span style="font-size:10px;color:${color};font-family:monospace">DC売上 ${dcRevStr(d)}</span>` : ''}
+      </div>
+      <div class="dc-card-note">${d.note}</div>`;
+    grid.appendChild(card);
+  });
+}
+
+// INIT
+renderTable();
+buildCards();
+</script>
+</body>
+</html>
